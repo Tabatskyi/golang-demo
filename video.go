@@ -66,6 +66,7 @@ func getDB(c *gin.Context) *pg.DB {
 		User:     user,
 		Password: pass,
 		Database: name,
+		TLSConfig: nil,
 	})
 	return dbSession
 }

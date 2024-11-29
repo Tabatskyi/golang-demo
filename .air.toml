@@ -1,0 +1,11 @@
+[build]
+  cmd = "go build -o ./tmp/main"
+  bin = "./tmp/main"
+  delay = 1000
+
+[log]
+  color = true
+
+[watch]
+  includes = ["."]
+  excludes = ["tmp", "node_modules", ".git"]

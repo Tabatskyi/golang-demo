@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silly-demo
+  labels:
+    app: silly-demo
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: silly-demo
+  template:
+    metadata:
+      labels:
+        app: silly-demo
+    spec:
+      containers:
+        - name: silly-demo
+          image: "{{ .Values.image.sillyDemo.repository }}:{{ .Values.image.sillyDemo.tag }}"
+          imagePullPolicy: {{ .Values.image.sillyDemo.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.sillyDemo.port }}
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+          env:
+            {{- range $key, $value := .Values.env.sillyDemo }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+        - name: nginx
+          image: "{{ .Values.image.nginx.repository }}:{{ .Values.image.nginx.tag }}"
+          imagePullPolicy: {{ .Values.image.nginx.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.nginx.port }}
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: app-volume
+          hostPath:
+            path: /app
+        - name: nginx-config
+          configMap:
+            name: nginx-config

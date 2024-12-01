@@ -1,0 +1,56 @@
+replicaCount: 1
+
+image:
+  sillyDemo:
+    repository: silly-demo
+    tag: latest
+    pullPolicy: IfNotPresent
+  nginx:
+    repository: nginx
+    tag: latest
+    pullPolicy: IfNotPresent
+  postgres:
+    repository: postgres
+    tag: 14-alpine
+    pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  sillyDemo:
+    type: ClusterIP
+    port: 8080
+  nginx:
+    type: ClusterIP
+    port: 80
+  postgres:
+    type: ClusterIP
+    port: 5432
+
+volumes:
+  postgresData:
+    storageClassName: standard
+    accessModes: ["ReadWriteOnce"]
+    size: 1Gi
+
+env:
+  sillyDemo:
+    DB_ENDPOINT: postgres
+    DB_PORT: 5432
+    DB_USER: postgres
+    DB_PASS: ohiorizz
+    PGPASSWORD: ohiorizz
+    DB_NAME: db
+  postgres:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ohiorizz
+    POSTGRES_DB: silly_demo_db
+
+serviceAccount:
+  create: false
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

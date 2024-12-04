@@ -1,8 +1,7 @@
 services:
   silly-demo:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    image: tabatskyi/silly_demo:latest
     ports:
       - "8080:8080"
     volumes:

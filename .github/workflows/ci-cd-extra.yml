@@ -1,0 +1,65 @@
+name: CI/CD extra task
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  test-build-push:
+    name: test build and push image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build and push image
+        id: build-and-push
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}/silly-demo
+          GIT_SHORT_HASH=$(git rev-parse --short HEAD)
+          TAG=${{ github.run_number }}-${GIT_SHORT_HASH}
+          docker build -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+  deploy:
+    name: deploy chart to AWS
+    needs: test-build-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: set up kube
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.27.0'
+
+      - name: Install helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'v3.11.3'
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Deploy Helm Chart
+        run: helm upgrade --install silly-demo ./helm-chart --set image.repository=ghcr.io/${{ github.repository }}/silly-demo --set image.tag=${{ env.IMAGE_TAG }}

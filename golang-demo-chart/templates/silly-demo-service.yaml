@@ -14,4 +14,3 @@ spec:
       targetPort: 8080
   selector:
     io.kompose.service: silly-demo
-  type: NodePort

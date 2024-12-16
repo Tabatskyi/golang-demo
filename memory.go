@@ -19,7 +19,7 @@ func memoryLeakHandler(ctx *gin.Context) {
 	if len(ctx.Query("max-memory")) > 0 {
 		maxMemory, _ = strconv.Atoi(ctx.Query("max-memory"))
 	}
-	frequency := 60 // 60 seconds
+	frequency := 5 // 5 seconds
 	if len(ctx.Query("frequency")) > 0 {
 		frequency, _ = strconv.Atoi(ctx.Query("frequency"))
 	}

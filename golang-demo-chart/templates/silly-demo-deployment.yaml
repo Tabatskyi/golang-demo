@@ -36,7 +36,7 @@ spec:
               value: postgres
             - name: PGPASSWORD
               value: ohiorizz
-          image: tabatskyi/silly_demo:latest
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           name: silly-demo
           ports:
             - containerPort: 8080

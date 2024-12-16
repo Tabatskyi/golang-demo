@@ -1,0 +1,11 @@
+groups:
+- name: memory-alerts
+  rules:
+  - alert: HighMemoryUsage
+    annotations:
+      description: Memory usage is above 128MB.
+      summary: Memory usage is above 128MB
+    expr: (node_memory_MemTotal_bytes - node_memory_MemFree_bytes) > 128 * 1024 * 1024
+    for: 1m
+    labels:
+      severity: critical

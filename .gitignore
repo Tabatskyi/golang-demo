@@ -1,3 +1,5 @@
 /golang-demo
 /**/.terraform/
 /**/*terraform.*
+alertmanager.yml
+golang-demo-chart/values.yaml

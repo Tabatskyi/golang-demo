@@ -38,29 +38,20 @@ jobs:
     needs: test-build-push
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
+     steps:
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - name: SSH set up
+        run: |
+          echo "$EC2_SSH_KEY" > ~/key.pem
+          chmod 600 ~/key.pem
 
-      - name: set up kube
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.27.0'
-
-      - name: Install helm
-        uses: azure/setup-helm@v3
-        with:
-          version: 'v3.11.3'
-
-      - name: Update kubeconfig
-        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
-
-      - name: Deploy Helm Chart
-        run: helm upgrade --install silly-demo ./helm-chart --set image.repository=ghcr.io/${{ github.repository }}/silly-demo --set image.tag=${{ env.IMAGE_TAG }}
+      - name: Deploy chart
+        run: |
+          ssh -T -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 -i ~/key.pem ubuntu@$EC2_PUBLIC_IP << 'EOF'
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            git clone ${{ github.repository }}
+            cd ${{ github.repository }}
+            helm upgrade --install silly-demo ./golang-demo-chart --set image.repository=ghcr.io/${{ github.repository }}/silly-demo --set image.tag=${{ env.IMAGE_TAG }}
+          EOF

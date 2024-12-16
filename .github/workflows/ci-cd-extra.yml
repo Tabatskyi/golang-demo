@@ -49,11 +49,10 @@ jobs:
         run: |
           ssh -T -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 -i ~/key.pem ubuntu@$EC2_PUBLIC_IP << EOF
             REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-            IMAGE_NAME="ghcr.io/\$REPO_NAME/silly-demo"
 
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             cd golang-demo
             git pull
-            sudo helm upgrade --install silly-demo ./golang-demo-chart --set image.repository=\$IMAGE_NAME --set image.tag=\$IMAGE_TAG
+            sudo helm upgrade --install silly-demo ./golang-demo-chart --set image.repository="ghcr.io/$REPO_NAME/silly-demo" --set image.tag="${{ env.IMAGE_TAG }}"
             nohup sudo minikube kubectl -- port-forward svc/nginx 80:80 > port-forward.log 2>&1 &
           EOF

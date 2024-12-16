@@ -25,7 +25,7 @@ jobs:
       - name: build and push image
         id: build-and-push
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}/silly-demo
+          IMAGE_NAME=ghcr.io/${{ github.repository | toLower }}/silly-demo
           GIT_SHORT_HASH=$(git rev-parse --short HEAD)
           TAG=${{ github.run_number }}-${GIT_SHORT_HASH}
           docker build -t $IMAGE_NAME:$TAG .

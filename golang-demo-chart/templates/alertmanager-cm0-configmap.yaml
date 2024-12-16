@@ -5,13 +5,13 @@ data:
       resolve_timeout: 5m
     receivers:
       - name: "email"
-        # email_configs:
-        # - auth_password: {{ .Values.mail.pass }}
-        #   auth_username: {{ .Values.mail.user }}
-        #   auth_identity: {{ .Values.mail.user }}
-        #   from: {{ .Values.mail.user }}
-        #   smarthost: {{ .Values.mail.host }}:{{ .Values.mail.port }}
-        #   to: {{ .Values.mail.user }}
+        email_configs:
+        - auth_password: {{ .Values.mail.pass }}
+          auth_username: {{ .Values.mail.user }}
+          auth_identity: {{ .Values.mail.user }}
+          from: {{ .Values.mail.user }}
+          smarthost: {{ .Values.mail.host }}:{{ .Values.mail.port }}
+          to: {{ .Values.mail.user }}
     route:
       group_by: ["alertname"]
       group_wait: 30s

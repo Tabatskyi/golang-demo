@@ -6,6 +6,10 @@ on:
       - main
       - master
 
+env:
+  EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+  EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
 jobs:
   test-build-push:
     name: test build and push image

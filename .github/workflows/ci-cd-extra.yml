@@ -54,5 +54,6 @@ jobs:
             cd golang-demo
             git pull
             sudo helm upgrade --install silly-demo ./golang-demo-chart --set image.repository="ghcr.io/${REPO_NAME}/silly-demo" --set image.tag="${{ env.IMAGE_TAG }}"
-            nohup sudo minikube kubectl -- port-forward svc/nginx 80:80 > port-forward.log 2>&1 &
+            nohup kubectl port-forward svc/nginx 127.0.0.1:80 > port-forward.log 2>&1 &
+            sudo nohup socat TCP-LISTEN:80,fork TCP:127.0.0.1:80 > socat.log 2>&1 &
           EOF

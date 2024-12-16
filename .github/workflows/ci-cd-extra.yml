@@ -37,11 +37,6 @@ jobs:
           docker push $IMAGE_NAME:$TAG
           echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
 
-  deploy:
-    name: deploy chart to AWS
-    needs: test-build-push
-    runs-on: ubuntu-latest
-    steps:
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -61,4 +56,5 @@ jobs:
           cd golang-demo
           git pull
           sudo helm upgrade --install silly-demo ./golang-demo-chart --set image.repository=\$IMAGE_NAME --set image.tag=\$IMAGE_TAG
+          nohup sudo minikube kubectl -- port-forward svc/nginx 80:80 > port-forward.log 2>&1 &
         EOF

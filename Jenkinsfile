@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    docker-compose up --build
+                    docker compose up --build
                     docker ps | grep $DOCKER_CONTAINER
                     '''
                 }

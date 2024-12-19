@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "tabatskyi/silly_demo:${env.BUILD_NUMBER}"
-        DOCKER_CONTAINER = "tabatskyi/silly_demo"
+        DOCKER_CONTAINER = "silly-demo"
     }
     stages {
         stage('Fetch changes') {

@@ -10,18 +10,11 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Tabatskyi/golang-demo.git'
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'docker build -t $DOCKER_IMAGE .'
-                }
-            }
-        }
-        stage('Run Container') {
+        stage('Build and run Docker Image') {
             steps {
                 script {
                     sh '''
-                    docker run -d --name $DOCKER_CONTAINER $DOCKER_IMAGE
+                    docker-compose up --build
                     docker ps | grep $DOCKER_CONTAINER
                     '''
                 }

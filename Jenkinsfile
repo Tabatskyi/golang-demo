@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "tabatskyi/silly_demo:${env.BUILD_NUMBER}"
-        DOCKER_CONTAINER = "silly-demo"
+        DOCKER_CONTAINER = "tabatskyi/silly_demo"
     }
     stages {
         stage('Fetch changes') {
@@ -22,7 +22,7 @@ pipeline {
         always {
             script {
                 try {
-                    def result = sh(script: "docker inspect --format='{{.State.Running}}' $DOCKER_CONTAINER", returnStdout: true).trim()
+                    def result = sh(script: "docker inspect $DOCKER_CONTAINER", returnStdout: true).trim()
                     if (result != 'true') {
                         error("Container failed to start.")
                     }

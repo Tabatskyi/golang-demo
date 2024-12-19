@@ -35,11 +35,18 @@ pipeline {
             }
         }
         success {
+            script {
+                echo "Container is running successfully."
+            }
             mail to: 'mark.tabatskyi@gmail.com',
                  subject: "Build #${env.BUILD_NUMBER} Successful",
                  body: "The job completed successfully. Check Jenkins for details."
         }
         failure {
+            script {
+                def logs = sh(script: "docker logs $DOCKER_CONTAINER", returnStdout: true).trim()
+                echo "Container is not running. Logs: ${logs}"
+            }
             mail to: 'mark.tabatskyi@gmail.com',
                  subject: "Build #${env.BUILD_NUMBER} Failed",
                  body: "The job failed. Check Jenkins for details."

@@ -13,10 +13,7 @@ pipeline {
         stage('Build and run Docker Image') {
             steps {
                 script {
-                    sh '''
-                    docker compose up --build
-                    docker ps | grep $DOCKER_CONTAINER
-                    '''
+                    sh 'docker compose build && docker compose up && docker ps | grep $DOCKER_CONTAINER'
                 }
             }
         }

@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - DB_ENDPOINT=localhost
+      - DB_ENDPOINT=i-cd_hw_jenkinsfile_jenkins-test-postgres-1
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASS=ohiorizz
